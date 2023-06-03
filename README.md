@@ -1,32 +1,14 @@
-# ![logo](https://community.trinitycore.org/public/style_images/1_trinitycore.png) TrinityCore (master)
-
-[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/TrinityCore/TrinityCore.svg)](https://isitmaintained.com/project/TrinityCore/TrinityCore "Average time to resolve an issue") [![Percentage of issues still open](https://isitmaintained.com/badge/open/TrinityCore/TrinityCore.svg)](https://isitmaintained.com/project/TrinityCore/TrinityCore "Percentage of issues still open")
-
---------------
-
-
-* [Build Status](#build-status)
 * [Introduction](#introduction)
 * [Requirements](#requirements)
 * [Install](#install)
 * [Reporting issues](#reporting-issues)
 * [Submitting fixes](#submitting-fixes)
 * [Copyright](#copyright)
-* [Authors &amp; Contributors](#authors--contributors)
 * [Links](#links)
 
-
-
-## Build Status
-
-master | 3.3.5
-:------------: | :------------:
-[![master Build Status](https://circleci.com/gh/TrinityCore/TrinityCore/tree/master.svg?style=shield)](https://circleci.com/gh/TrinityCore/TrinityCore/tree/master) | [![3.3.5 Build Status](https://circleci.com/gh/TrinityCore/TrinityCore/tree/3.3.5.svg?style=shield)](https://circleci.com/gh/TrinityCore/TrinityCore/tree/3.3.5)
-[![master Build status](https://ci.appveyor.com/api/projects/status/54d0u1fxe50ad80o/branch/master?svg=true)](https://ci.appveyor.com/project/DDuarte/trinitycore/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/54d0u1fxe50ad80o/branch/3.3.5?svg=true)](https://ci.appveyor.com/project/DDuarte/trinitycore/branch/3.3.5)
-[![master GCC Build status](https://github.com/TrinityCore/TrinityCore/actions/workflows/gcc-build.yml/badge.svg?branch=master&event=push)](https://github.com/TrinityCore/TrinityCore/actions?query=workflow%3AGCC+branch%3Amaster+event%3Apush) | [![3.3.5 GCC Build status](https://github.com/TrinityCore/TrinityCore/actions/workflows/gcc-build.yml/badge.svg?branch=3.3.5&event=push)](https://github.com/TrinityCore/TrinityCore/actions?query=workflow%3AGCC+branch%3A3.3.5+event%3Apush)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/435/badge.svg)](https://scan.coverity.com/projects/435) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/4656/badge.svg)](https://scan.coverity.com/projects/4656)
-
 ## Introduction
+
+This repository is a fork from TrinityCore's master branch. It includes custom scripts that work around current bugs. More scripts will be coming soon.
 
 TrinityCore is a *MMORPG* Framework based mostly in C++.
 
@@ -36,9 +18,6 @@ improve and cleanup the codebase at the same time as improving the in-game
 mechanics and functionality.
 
 It is completely open source; community involvement is highly encouraged.
-
-If you wish to contribute ideas or code, please visit our site linked below or
-make pull requests to our [Github repository](https://github.com/TrinityCore/TrinityCore/pulls).
 
 For further information on the TrinityCore project, please visit our project
 website at [TrinityCore.org](https://www.trinitycore.org).
@@ -55,24 +34,19 @@ Windows, Linux and macOS.
 Detailed installation guides are available in the [wiki](https://trinitycore.info/en/home) for
 Windows, Linux and macOS.
 
+PLEASE USE THE SQL FILES PROVIDED BY US THE OTHERWISE CUSTOM SCRIPS WILL NOT LOAD!!!
+
 
 ## Reporting issues
 
-Issues can be reported via the [Github issue tracker](https://github.com/TrinityCore/TrinityCore/labels/Branch-master).
+Please report issues to the TrinityCore developers [TrinityCore issue tracker](https://github.com/TrinityCore/TrinityCore/labels/Branch-master).
 
-Please take the time to review existing issues before submitting your own to
-prevent duplicates.
-
-In addition, thoroughly read through the [issue tracker guide](https://community.trinitycore.org/topic/37-the-trinitycore-issuetracker-and-you/) to ensure
-your report contains the required information. Incorrect or poorly formed
-reports are wasteful and are subject to deletion.
+Panda Express WoW will only offer support if there are issues with our customs scripts or modified databases.
 
 
-## Submitting fixes
+## Updates
 
-C++ fixes are submitted as pull requests via Github. For more information on how to
-properly submit a pull request, read the [how-to: maintain a remote fork](https://community.trinitycore.org/topic/9002-howto-maintain-a-remote-fork-for-pull-requests-tortoisegit/).
-For SQL only fixes, open a ticket; if a bug report exists for the bug, post on an existing ticket.
+Any updates/fixes done to the TrinityCore master branch will be synced to this fork. Keep in mind this is done by the Panda Express devs and may be delayed.
 
 
 ## Copyright
@@ -89,7 +63,5 @@ Read file [AUTHORS](AUTHORS).
 
 ## Links
 
-* [Website](https://www.trinitycore.org)
-* [Wiki](https://www.trinitycore.info)
-* [Forums](https://talk.trinitycore.org/)
-* [Discord](https://discord.trinitycore.org/)
+* [Our Website](https://pandaexpress.com/)
+* [TrinityCore's Website](https://www.trinitycore.org/)

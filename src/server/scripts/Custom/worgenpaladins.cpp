@@ -29,12 +29,12 @@ public:
             player->LearnSpell(53489, false, false);  // The Art of War
 
             // Add starting items for a Worgen Paladin (Paladin starting armor set)
-            AddStartingItem(player, 187726, 1);   // Paladin's Girdle
-            AddStartingItem(player, 187722, 1);   // Paladin's Chestplate
-            AddStartingItem(player, 187724, 1);   // Paladin's Gauntlets
-            AddStartingItem(player, 187727, 1);   // Paladin's Sabatons
-            AddStartingItem(player, 187723, 1);   // Paladin's Greaves
-            AddStartingItem(player, 57155, 1);   // Worgen Slaying Sword
+            player->AddItem(187726, 1);   // Paladin's Girdle
+            player->AddItem(187722, 1);   // Paladin's Chestplate
+            player->AddItem(187724, 1);   // Paladin's Gauntlets
+            player->AddItem(187727, 1);   // Paladin's Sabatons
+            player->AddItem(187723, 1);   // Paladin's Greaves
+            player->AddItem(57155, 1);   // Worgen Slaying Sword
 
 
             // You can add more customizations or logic here if needed

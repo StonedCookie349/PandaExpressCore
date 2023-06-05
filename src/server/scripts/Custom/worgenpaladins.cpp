@@ -1,9 +1,19 @@
+#include "AccountMgr.h"
 #include "ScriptMgr.h"
 #include "Player.h"
+#include "Config.h"
+#include "Common.h"
 #include "Chat.h"
+#include "ObjectAccessor.h"
+#include "ObjectMgr.h"
+#include "Player.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "SharedDefines.h"
+#include "World.h"
+#include "WorldSession.h"
 #include "Item.h"
-#include "SpellInfo.h"
-#include "Inventory.h"
 
 class WorgenPaladinScript : public PlayerScript
 {
@@ -40,22 +50,9 @@ public:
             // You can add more customizations or logic here if needed
         }
     }
-
-private:
-    static void AddStartingItem(Player* player, uint32 itemId, uint32 count);
 };
 
-void WorgenPaladinScript::AddStartingItem(Player* player, uint32 itemId, uint32 count)
-{
-        player->AddItem(itemId, count);
-};
-
-void AddSC_WorgenPaladinScript()
-{
-    new WorgenPaladinScript();
-}
-
-void AddCustomScripts()
-{
-    AddSC_WorgenPaladinScript();
-}
+    void AddSC_WorgenPaladinScript()
+    {
+        new WorgenPaladinScript();
+    }

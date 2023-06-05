@@ -36,6 +36,7 @@
 #include "SharedDefines.h"
 #include "World.h"
 #include "WorldSession.h"
+#include "Item.h"
 
 constexpr auto YESSKIPDK = 1;
 

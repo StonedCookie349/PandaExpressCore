@@ -4385,90 +4385,45 @@ Pvp.FactionBalance.Pct20 = 0.8
 #
 ###################################################################################################
 
-					Skip Death Knight Starting Area
-
 ###################################################################################################
+
+#SKIP DEATH KNIGHT STARTING AREA
 #
-#    Skip Death Knight Starting Area
-#        Enable this if you want to skip the Dracthyrarting area
-#        Start with level 58 DK with Runeforging.
 #
-#    Skip.Dracthyr.Starter.Announce.enable
+#    Skip.Deathknight.Starter.Announce.enable
 #         Description: Announces Module when player logs in.
 #         Default:    0 - (Disabled)
 #                     1 - (Enabled)
 
-Skip.Dracthyr.Starter.Announce.enable = 0
+Skip.Deathknight.Starter.Announce.enable = 0
 
-#    Skip.Dracthyr.Starter.Enable
+#    Skip.DeathKnight.Starter.Enable
 #         Active Module for all new accounts regardless of account level. Instant Skip on DK Creation.
 #         Default:    0 - (Disabled)
 #                     1 - (Enabled)
 
-Skip.Dracthyr.Starter.Enable = 1
+Skip.Deathknight.Starter.Enable = 1
 
-#    GM.Skip.Dracthyr.Starter.Enable
+#    GM.Skip.Deathknight.Starter.Enable
 #         Active Module for all new accounts of a GM account level ONLY. Instant Skip on DK Creation.
-#         Ensure you have Skip.Dracthyr.Starter.Enable set to 0 if using this conf.
+#         Ensure you have Skip.Deathknight.Starter.Enable set to 0 if using this conf.
 #         Default:    0 - (Disabled)
 #                     1 - (Enabled)
 
-GM.Skip.Dracthyr.Starter.Enable = 1
+GM.Skip.Deathknight.Starter.Enable = 1
 
-#    Skip.Dracthyr.Start.Level
+#    Skip.Deathknight.Start.Level
 #         Adjusted Death Knight Start Level if module is used.
 #         Default:    58 - (Default)
 #
 
-Skip.Dracthyr.Start.Level = 10
+Skip.Deathknight.Start.Level = 10
 
-#    Skip.Dracthyr.Optional.Enable
+#    Skip.Deathknight.Optional.Enable
 #    Enables optional to skip when talking to lich king on first creation of dk.
 #    Default: 1 - (Active)
 
-Skip.Dracthyr.Optional.Enable = 1
+Skip.Deathknight.Optional.Enable = 1
 
 #
 ###################################################################################################
-
-###################################################################################################
-
-#SKIP DRACTHYR STARTING AREA
-#
-#
-#    Skip.Dracthyr.Starter.Announce.enable
-#         Description: Announces Module when player logs in.
-#         Default:    0 - (Disabled)
-#                     1 - (Enabled)
-
-Skip.Dracthyr.Starter.Announce.enable = 0
-
-#    Skip.Dracthyr.Starter.Enable
-#         Active Module for all new accounts regardless of account level. Instant Skip on DK Creation.
-#         Default:    0 - (Disabled)
-#                     1 - (Enabled)
-
-Skip.Dracthyr.Starter.Enable = 1
-
-#    GM.Skip.Dracthyr.Starter.Enable
-#         Active Module for all new accounts of a GM account level ONLY. Instant Skip on DK Creation.
-#         Ensure you have Skip.Dracthyr.Starter.Enable set to 0 if using this conf.
-#         Default:    0 - (Disabled)
-#                     1 - (Enabled)
-
-GM.Skip.Dracthyr.Starter.Enable = 1
-
-#    Skip.Dracthyr.Start.Level
-#         Adjusted Death Knight Start Level if module is used.
-#         Default:    58 - (Default)
-#
-
-Skip.Dracthyr.Start.Level = 10
-
-#    Skip.Dracthyr.Optional.Enable
-#    Enables optional to skip when talking to lich king on first creation of dk.
-#    Default: 1 - (Active)
-
-Skip.Dracthyr.Optional.Enable = 1
-
-#

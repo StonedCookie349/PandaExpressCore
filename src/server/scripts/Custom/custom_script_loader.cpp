@@ -20,11 +20,9 @@
 // void Add${NameOfDirectory}Scripts()
 void AddSC_WorgenPaladinScript();
 void AddSC_skip_StarterArea();
-void AddSC_skip_StarterDracthyr();
 
 void AddCustomScripts()
 {
     AddSC_WorgenPaladinScript();
     AddSC_skip_StarterArea();
-    AddSC_skip_StarterDracthyr();
 }

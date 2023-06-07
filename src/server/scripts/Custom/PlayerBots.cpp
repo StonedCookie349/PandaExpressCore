@@ -2,15 +2,11 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
-
-// Include TrinityCore headers
-#include <TrinityCore/TrinityCore.h>
-// Include TrinityCore API headers for character creation
-#include <TrinityCore/Character/Player.h>
-#include <TrinityCore/World/World.h>
+#include <Player.h>
+#include <World.h>
 
 using namespace std;
-using namespace Trinity;
+using namespace bots;
 
 // Function to generate a random integer within a given range
 int getRandomInt(int min, int max) {

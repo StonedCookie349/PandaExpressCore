@@ -4441,7 +4441,7 @@ Skip.Deathknight.Optional.Enable = 1
 Skip.Dracthyr.Starter.Announce.enable = 0
 
 #    Skip.Dracthyr.Starter.Enable
-#         Active Module for all new accounts regardless of account level. Instant Skip on DK Creation.
+#         Active Module for all new accounts regardless of account level. Instant Skip on Dracthyr Creation.
 #         Default:    0 - (Disabled)
 #                     1 - (Enabled)
 
@@ -4466,6 +4466,6 @@ Skip.Dracthyr.Start.Level = 60
 #    Enables optional to skip when talking to Scalecommander on first creation of Dracthyr.
 #    Default: 1 - (Active)
 
-Skip.Dracthyr.Optional.Enable = 0
+Skip.Dracthyr.Optional.Enable = 1
 
 #

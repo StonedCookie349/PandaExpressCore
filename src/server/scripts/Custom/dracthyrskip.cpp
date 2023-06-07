@@ -1,4 +1,4 @@
-/*
+﻿/*
 * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
 *
 * This program is free software; you can redistribute it and/or modify it
@@ -66,11 +66,11 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
             player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), LootItemType::Item, 0, player);
         }
     }
-    int DKL = sConfigMgr->GetFloatDefault("Skip.Drakthyr.Start.Level", 58);
-    if (player->GetLevel() <= DKL)
+    int DTL = sConfigMgr->GetFloatDefault("Skip.Drakthyr.Start.Level", 60);
+    if (player->GetLevel() <= DTL)
     {
         //GiveLevel updates character properties more thoroughly than SetLevel
-        player->GiveLevel(DKL);
+        player->GiveLevel(DTL);
     }
 
     //Don't need to save all players, just current

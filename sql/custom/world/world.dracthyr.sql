@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `npcflag`='3', `ScriptName`='npc_tc_skip_azur' WHERE  `entry`=187252;

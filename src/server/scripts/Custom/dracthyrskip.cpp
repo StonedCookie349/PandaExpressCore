@@ -44,7 +44,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
 {
 
     // these are all the starter quests that award talent points, quest items, or spells
-    int STARTER_QUESTS[33] = { 68464, 64863, 64865, 64866, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045,72263, 65049, 65050, 65046, 65052, 65057, -1, 65701, 65084, 65087, 65097, 65098, 65100 };
+    int STARTER_QUESTS[30] = { 68464, 64863, 64865, 64866, -1, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045, 72263, 65049, 65050, 65046, 65052, 65057, 65701, 65084, 65087, 65097, 65098, 65100 };
     int specialSurpriseQuestId = -1;
     switch (player->GetRaceMask())
     {
@@ -56,8 +56,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
         break;
     }
     STARTER_QUESTS[22] = specialSurpriseQuestId;
-    STARTER_QUESTS[32] = player->GetTeam() == ALLIANCE ? 13188 : 13189;
-
+    STARTER_QUESTS[2] = player->GetTeam() == ALLIANCE ? 65101 : 65613;
     for (int questId : STARTER_QUESTS)
     {
         if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
@@ -113,7 +112,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
 
         void OnLogin(Player* player, bool firstLogin) override
         {
-            if (firstLogin && player->GetAreaId() == 4342)
+            if (firstLogin && player->GetAreaId() == 4196)
             {
                 //These changes make it so user mistakes in the configuration file don't cause this to run 2x
                 if ((sConfigMgr->GetBoolDefault("Skip.Dracthyr.Starter.Enable", true) && player->GetSession()->GetSecurity() == SEC_PLAYER)

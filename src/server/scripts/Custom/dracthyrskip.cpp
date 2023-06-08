@@ -1,26 +1,3 @@
-﻿/*
-* This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
-*
-* This program is free software; you can redistribute it and/or modify it
-* under the terms of the GNU General Public License as published by the
-* Free Software Foundation; either version 2 of the License, or (at your
-* option) any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-* more details.
-*
-* You should have received a copy of the GNU General Public License along
-* with this program. If not, see <http://www.gnu.org/licenses/>.
-*
-* Skip Drac'Thyr Module
-* Original Module From Single Player Project Consolidated Skip Module
-* Rewritten for TC 335 By Single Player Project Developer MDic
-* Original Concept from conanhun513
-* Assistance and Review by JinnaiX
-*/
-
 #include "AccountMgr.h"
 #include "ScriptMgr.h"
 #include "Player.h"
@@ -42,9 +19,10 @@ constexpr auto YESSKIPDT = 1;
 
 void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
 {
+    player->AddItem(6948, true); //Hearthstone
 
     // these are all the starter quests that award talent points, quest items, or spells
-    int STARTER_QUESTS[30] = { 68464, 64863, 64865, 64866, -1, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045, 72263, 65049, 65050, 65046, 65052, 65057, 65701, 65084, 65087, 65097, 65098, 65100 };
+    int STARTER_QUESTS[29] = { 68464, 64863, 64865, 64866, -1, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045, 72263, 65049, 65050, 65046, 65052, 65057, 65701, 65084, 65087, 65097, 65098, 65100 };
     int specialSurpriseQuestId = -1;
     switch (player->GetRaceMask())
     {
@@ -55,7 +33,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
         specialSurpriseQuestId = 65613;
         break;
     }
-    STARTER_QUESTS[22] = specialSurpriseQuestId;
+    STARTER_QUESTS[5] = specialSurpriseQuestId;
     STARTER_QUESTS[2] = player->GetTeam() == ALLIANCE ? 65101 : 65613;
     for (int questId : STARTER_QUESTS)
     {
@@ -125,14 +103,6 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
     };
 
 #define LOCALE_AZURATHEL_0 "I wish to skip the Dracthyr starter questline."
-#define LOCALE_AZURATHEL_1 "??? ?? ??? ??? ??? ???? ????."
-#define LOCALE_AZURATHEL_2 "Je souhaite sauter la s�rie de qu�tes de d�marrage du Chevalier de la mort."
-#define LOCALE_AZURATHEL_3 "Ich m�chte die Todesritter-Starter-Questreihe �berspringen."
-#define LOCALE_AZURATHEL_4 "??????????????"
-#define LOCALE_AZURATHEL_5 "??????????????"
-#define LOCALE_AZURATHEL_6 "Deseo saltarme la l�nea de misiones de inicio del Caballero de la Muerte."
-#define LOCALE_AZURATHEL_7 "Deseo saltarme la l�nea de misiones de inicio del Caballero de la Muerte."
-#define LOCALE_AZURATHEL_8 "? ???? ?????????? ????????? ??????? ??????? ?????? ??????."
 
     class Trinitycore_optional_dracthyr_skip : public CreatureScript
     {
@@ -155,14 +125,6 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
                     char const* localizedEntry;
                     switch (player->GetSession()->GetSessionDbcLocale())
                     {
-                    case LOCALE_koKR: localizedEntry = LOCALE_AZURATHEL_1; break;
-                    case LOCALE_frFR: localizedEntry = LOCALE_AZURATHEL_2; break;
-                    case LOCALE_deDE: localizedEntry = LOCALE_AZURATHEL_3; break;
-                    case LOCALE_zhCN: localizedEntry = LOCALE_AZURATHEL_4; break;
-                    case LOCALE_zhTW: localizedEntry = LOCALE_AZURATHEL_5; break;
-                    case LOCALE_esES: localizedEntry = LOCALE_AZURATHEL_6; break;
-                    case LOCALE_esMX: localizedEntry = LOCALE_AZURATHEL_7; break;
-                    case LOCALE_ruRU: localizedEntry = LOCALE_AZURATHEL_8; break;
                     case LOCALE_enUS: localizedEntry = LOCALE_AZURATHEL_0; break;
                     default: localizedEntry = LOCALE_AZURATHEL_0;
                     }

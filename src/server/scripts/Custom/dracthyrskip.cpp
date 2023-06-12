@@ -33,7 +33,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
         specialSurpriseQuestId = 65613;
         break;
     }
-    STARTER_QUESTS[4] = specialSurpriseQuestId;
+    STARTER_QUESTS[5] = specialSurpriseQuestId;
     STARTER_QUESTS[2] = player->GetTeam() == ALLIANCE ? 65101 : 65613;
     for (int questId : STARTER_QUESTS)
     {

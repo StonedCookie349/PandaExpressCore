@@ -24,7 +24,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
     // these are all the starter quests that award talent points, quest items, or spells
     int STARTER_QUESTS[29] = { 68464, 64863, 64865, 64866, -1, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045, 72263, 65049, 65050, 65046, 65052, 65057, 65701, 65084, 65087, 65097, 65098, 65100 };
     int specialSurpriseQuestId = -1;
-    switch (player->GetRaceMask())
+    switch (player->GetRace())
     {
     case RACE_DRACTHYR_ALLIANCE:
         specialSurpriseQuestId = 65101;
@@ -33,7 +33,7 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
         specialSurpriseQuestId = 65613;
         break;
     }
-    STARTER_QUESTS[5] = specialSurpriseQuestId;
+    STARTER_QUESTS[4] = specialSurpriseQuestId;
     STARTER_QUESTS[2] = player->GetTeam() == ALLIANCE ? 65101 : 65613;
     for (int questId : STARTER_QUESTS)
     {

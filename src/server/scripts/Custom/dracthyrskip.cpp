@@ -19,7 +19,6 @@ constexpr auto YESSKIPDT = 1;
 
 void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
 {
-    player->AddItem(6948, true); //Hearthstone
 
     // these are all the starter quests that award talent points, quest items, or spells
     int STARTER_QUESTS[29] = { 68464, 64863, 64865, 64866, -1, 65615, 64872, 64873, 65036, 65060, 65063, 65074, 65073, 65307, 66324, 65075, 65045, 72263, 65049, 65050, 65046, 65052, 65057, 65701, 65084, 65087, 65097, 65098, 65100 };
@@ -40,10 +39,10 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
         if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
         {
             player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
-            player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), LootItemType::Item, 0, player);
+            player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), LootItemType::Item, 0, player, false);
         }
     }
-    int DTL = sConfigMgr->GetFloatDefault("Skip.Drakthyr.Start.Level", 60);
+    int DTL = sConfigMgr->GetFloatDefault("Skip.Dracthyr.Start.Level", 60);
     if (player->GetLevel() <= DTL)
     {
         //GiveLevel updates character properties more thoroughly than SetLevel

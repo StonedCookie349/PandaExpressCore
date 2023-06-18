@@ -34,14 +34,18 @@ void Trinitycore_skip_dracthyr_HandleSkip(Player* player)
     }
     STARTER_QUESTS[4] = specialSurpriseQuestId;
     STARTER_QUESTS[2] = player->GetTeam() == ALLIANCE ? 65101 : 65613;
+
     for (int questId : STARTER_QUESTS)
     {
         if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
         {
             player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
-            player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), LootItemType::Item, 0, player, false);
+            player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), LootItemType::Item, 0, player);
         }
     }
+
+    player->AddItem(6948, true);//Adds a hearthstone to the player's inventory
+
     int DTL = sConfigMgr->GetFloatDefault("Skip.Dracthyr.Start.Level", 60);
     if (player->GetLevel() <= DTL)
     {

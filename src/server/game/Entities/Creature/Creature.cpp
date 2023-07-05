@@ -497,7 +497,7 @@ bool Creature::InitEntry(uint32 entry, CreatureData const* data /*= nullptr*/)
 
     m_creatureInfo = creatureInfo;
     SetEntry(entry);
-    m_creatureDifficulty = creatureInfo->GetDifficulty(GetMap()->GetDifficultyID());
+    m_creatureDifficulty = creatureInfo->GetDifficulty(!IsPet() ? GetMap()->GetDifficultyID() : DIFFICULTY_NONE);
 
     // equal to player Race field, but creature does not have race
     SetRace(RACE_NONE);
@@ -687,6 +687,8 @@ bool Creature::UpdateEntry(uint32 entry, CreatureData const* data /*= nullptr*/,
 
 void Creature::ApplyAllStaticFlags(CreatureStaticFlagsHolder const& flags)
 {
+    _staticFlags = flags;
+
     // Apply all other side effects of flag changes
     SetTemplateRooted(flags.HasFlag(CREATURE_STATIC_FLAG_SESSILE));
 }

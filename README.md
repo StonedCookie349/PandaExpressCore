@@ -1,67 +1,28 @@
-* [Introduction](#introduction)
-* [Requirements](#requirements)
-* [Install](#install)
-* [Reporting issues](#reporting-issues)
-* [Submitting fixes](#submitting-fixes)
-* [Copyright](#copyright)
-* [Links](#links)
+# Introduction
+This project is a modified fork of TrinityCore's master repository. I have implemented a few scripts such as a quest skipper for worgens, goblins, pandaren, drac'thyr, and other races with phased starting areas. I have plans to make every class playable on any race the player chooses and have been tinkering with a possible VIP system that gives out some rewards to my supporters.
 
-## Introduction
+# Install
+You can find a complete installation guide as well as links to the required software on TrinityCore's website: https://trinitycore.info/
 
-This repository is a fork from TrinityCore's master branch. It includes custom scripts that work around current bugs. More scripts will be coming soon.
+When it asks you to clone the repository make sure to use my URL otherwise you won't be able to get the custom scripts.
 
-TrinityCore is a *MMORPG* Framework based mostly in C++.
+Please use the SQL files I have provided in the "releases" section of this repo. Some scripts won't load without the modifications I have made to the databases.
 
-It is derived from *MaNGOS*, the *Massive Network Game Object Server*, and is
-based on the code of that project with extensive changes over time to optimize,
-improve and cleanup the codebase at the same time as improving the in-game
-mechanics and functionality.
-
-It is completely open source; community involvement is highly encouraged.
-
-For further information on the TrinityCore project, please visit our project
-website at [TrinityCore.org](https://www.trinitycore.org).
-
-## Requirements
+The worldserver.conf.dist and bnetserver.conf.dist have been modified as well. Try not to touch them very much.
 
 
-Software requirements are available in the [wiki](https://trinitycore.info/en/install/requirements) for
-Windows, Linux and macOS.
+# Reporting Issues
+It would probably be better to come to me for any issues or confusions you are having. TrinityCore's community gets kind of...annoyed at people asking for help.
+
+If you do need assistance please feel free contact me through my community Discord server. You can find the link in the about section of this repository, or on my profile page. I'll do my best to assist.
 
 
-## Install
+# Updates
+I try to push updates every Tuesday to stay up-to-date with TrinityCore. I will, however, completely forget about it and won't push any changes for weeks. I have a tendency to do that often. But hey, we're all human though, right?
 
-Detailed installation guides are available in the [wiki](https://trinitycore.info/en/home) for
-Windows, Linux and macOS.
+# License and Credits
+This repository is protected under GNU General Public License v2.0. For more information on GPL v2.0, please visit: https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
 
-PLEASE USE THE SQL FILES PROVIDED BY US THE OTHERWISE CUSTOM SCRIPS WILL NOT LOAD!!!
+The whole framework and the existence of private servers are thanks to TrinityCore and their community.
 
-
-## Reporting issues
-
-Please report issues to the TrinityCore developers [TrinityCore issue tracker](https://github.com/TrinityCore/TrinityCore/labels/Branch-master).
-
-Panda Express WoW will only offer support if there are issues with our customs scripts or modified databases.
-
-
-## Updates
-
-Any updates/fixes done to the TrinityCore master branch will be synced to this fork. Keep in mind this is done by the Panda Express devs and may be delayed.
-
-
-## Copyright
-
-License: GPL 2.0
-
-Read file [COPYING](COPYING).
-
-
-## Authors &amp; Contributors
-
-Read file [AUTHORS](AUTHORS).
-
-
-## Links
-
-* [Our Website](https://pandaexpress.com/)
-* [TrinityCore's Website](https://www.trinitycore.org/)
+Custom scripts were provided by me with the assistance of my organization and ChatGPT. Don't underestimate the power of AI...and friendship!

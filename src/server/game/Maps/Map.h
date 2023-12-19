@@ -338,6 +338,8 @@ class TC_GAME_API Map : public GridRefManager<NGridType>
         bool IsBattlegroundOrArena() const;
         bool IsScenario() const;
         bool IsGarrison() const;
+        // Currently, this means that every entity added to this map will be marked as active
+        bool IsAlwaysActive() const;
         bool GetEntrancePos(int32& mapid, float& x, float& y);
 
         void AddObjectToRemoveList(WorldObject* obj);
@@ -891,7 +893,7 @@ class TC_GAME_API BattlegroundMap : public Map
         void RemoveAllPlayers() override;
 
         virtual void InitVisibilityDistance() override;
-        Battleground* GetBG() { return m_bg; }
+        Battleground* GetBG() const { return m_bg; }
         void SetBG(Battleground* bg) { m_bg = bg; }
     private:
         Battleground* m_bg;

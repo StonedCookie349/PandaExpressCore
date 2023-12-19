@@ -497,7 +497,7 @@ enum class CriteriaFlags : uint8
 
 DEFINE_ENUM_FLAG(CriteriaFlags);
 
-enum class CriteriaType : uint8
+enum class CriteriaType : int16
 {
     KillCreature                                   = 0,   // Kill NPC "{Creature}"
     WinBattleground                                = 1,   // Win battleground "{Map}"
@@ -596,7 +596,7 @@ enum class CriteriaType : uint8
     RollAnyGreed                                   = 94,  // Roll any number on greed
     ReleasedSpirit                                 = 95,  /*NYI*/ // Released Spirit
     AccountKnownPet                                = 96,  /*NYI*/ // Account knows pet "{Creature}" (Backtracked)
-    DefeatDungeonEncounterWhileElegibleForLoot     = 97,  /*NYI*/ // Defeat Encounter "{DungeonEncounter}" While Eligible For Loot
+    DefeatDungeonEncounterWhileElegibleForLoot     = 97,  // Defeat Encounter "{DungeonEncounter}" While Eligible For Loot
     // UNUSED 18{}                                 = 98,  // Unused
     // UNUSED 19{}                                 = 99,  // Unused
     // UNUSED 20{}                                 = 100, // Unused
@@ -664,7 +664,7 @@ enum class CriteriaType : uint8
     ActivelyEarnPetLevel                           = 162, // (Player) Actively earn level {#Level} with a pet by a player
     EnterArea                                      = 163, // Enter Map Area "{AreaTable}"
     LeaveArea                                      = 164, // Leave Map Area "{AreaTable}"
-    DefeatDungeonEncounter                         = 165, /*NYI*/ // Defeat Encounter "{DungeonEncounter}"
+    DefeatDungeonEncounter                         = 165, // Defeat Encounter "{DungeonEncounter}"
     PlaceAnyGarrisonBuilding                       = 166, /*NYI*/ // Garrison Building: Place any
     PlaceGarrisonBuilding                          = 167, // Garrison Building: Place "{GarrBuilding}"
     ActivateAnyGarrisonBuilding                    = 168, // Garrison Building: Activate any
@@ -744,7 +744,9 @@ enum class CriteriaType : uint8
 
     PerksProgramMonthComplete                      = 249, /*NYI*/
     CompleteTrackingQuest                          = 250, /*NYI*/
-    Count
+
+    GainLevels                                     = 253, // Gain levels
+    Count                                          = 257
 };
 
 enum class CriteriaTreeFlags : uint16
@@ -1686,6 +1688,11 @@ enum class ModifierTreeType : int32
     PlayerHasCompletedQuestWithLabel                                    = 372, /*NYI*/ // Player has previously completed quest with {QuestLabel}
     LegacyLootIsEnabled                                                 = 373, /*NYI*/
     PlayerZPositionBelow                                                = 374,
+    PlayerWeaponHighWatermarkAboveOrEqual                               = 375, /*NYI*/
+    PlayerHeadHighWatermarkAboveOrEqual                                 = 376, /*NYI*/
+    PlayerHasDisplayedCurrencyLessThan                                  = 377, /*NYI*/ // Player has {CurrencyTypes} less than {#Amount} (value visible in ui is taken into account, not raw value)
+
+    PlayerIsOnMapWithExpansion                                          = 380, // Player is on map that has {ExpansionID}
 };
 
 enum class ModifierTreeOperator : int8
@@ -1714,7 +1721,7 @@ enum MountFlags
     MOUNT_FLAG_HIDE_IF_UNKNOWN          = 0x40
 };
 
-enum class PhaseEntryFlags : uint16
+enum class PhaseEntryFlags : int32
 {
     ReadOnly                = 0x001,
     InternalPhase           = 0x002,
@@ -1768,7 +1775,7 @@ enum class PlayerInteractionType : int32
     Registrar                   = 11,
     Vendor                      = 12,
     PetitionVendor              = 13,
-    TabardVendor                = 14,
+    GuildTabardVendor                = 14,
     TalentMaster                = 15,
     SpecializationMaster        = 16,
     MailInfo                    = 17,
@@ -1818,7 +1825,8 @@ enum class PlayerInteractionType : int32
     TraitSystem                 = 61,
     BarbersChoice               = 62,
     JailersTowerBuffs           = 63,
-    MajorFactionRenown          = 64
+    MajorFactionRenown          = 64,
+    PersonalTabardVendor        = 65
 };
 
 enum class PowerTypeFlags : int16
@@ -2123,12 +2131,19 @@ DEFINE_ENUM_FLAG(SummonPropertiesFlags);
 #define MAX_TALENT_COLUMNS 3
 #define MAX_PVP_TALENT_SLOTS 4
 
-enum TaxiNodeFlags
+enum class TaxiNodeFlags : int32
 {
-    TAXI_NODE_FLAG_ALLIANCE             = 0x01,
-    TAXI_NODE_FLAG_HORDE                = 0x02,
-    TAXI_NODE_FLAG_USE_FAVORITE_MOUNT   = 0x10
+    ShowOnAllianceMap           = 0x00000001,
+    ShowOnHordeMap              = 0x00000002,
+    ShowOnMapBorder             = 0x00000004,
+    ShowIfClientPassesCondition = 0x00000008,
+    UsePlayerFavoriteMount      = 0x00000010,
+    EndPointPnly                = 0x00000020,
+    IgnoreForFindNearest        = 0x00000040,
+    DoNotShowInWorldMapUI       = 0x00000080,
 };
+
+DEFINE_ENUM_FLAG(TaxiNodeFlags);
 
 enum TaxiPathNodeFlags
 {

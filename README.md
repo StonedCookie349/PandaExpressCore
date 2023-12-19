@@ -12,8 +12,6 @@ The worldserver.conf.dist and bnetserver.conf.dist have been modified as well. T
 
 
 # Reporting Issues
-It would probably be better to come to me for any issues or confusions you are having. TrinityCore's community gets kind of...annoyed at people asking for help.
-
 If you do need assistance please feel free contact me through my community Discord server. You can find the link in the about section of this repository, or on my profile page. I'll do my best to assist.
 
 

@@ -85,7 +85,7 @@ public:
 
     void OnLogin(Player* Player, bool /*firstLogin*/) override
     {
-        if (sConfigMgr->GetBoolDefault("Skip.dracthyr.Starter.Announce.enable", true))
+        if (sConfigMgr->GetBoolDefault("Skip.Dracthyr.Starter.Announce.enable", true))
         {
             ChatHandler(Player->GetSession()).SendSysMessage("This server is running the |cff4CFF00Trinitycore Skip dracthyr Starter |rmodule.");
         }
@@ -102,8 +102,8 @@ public:
         if (firstLogin && player->GetAreaId() == 4342)
         {
             //These changes make it so user mistakes in the configuration file don't cause this to run 2x
-            if ((sConfigMgr->GetBoolDefault("Skip.dracthyr.Starter.Enable", true) && player->GetSession()->GetSecurity() == SEC_PLAYER)
-                || (sConfigMgr->GetBoolDefault("GM.Skip.dracthyr.Starter.Enable", true) && player->GetSession()->GetSecurity() >= SEC_MODERATOR))
+            if ((sConfigMgr->GetBoolDefault("Skip.Dracthyr.Starter.Enable", true) && player->GetSession()->GetSecurity() == SEC_PLAYER)
+                || (sConfigMgr->GetBoolDefault("GM.Skip.Dracthyr.Starter.Enable", true) && player->GetSession()->GetSecurity() >= SEC_MODERATOR))
             {
                 Trinitycore_skip_dracthyr_HandleSkip(player);
             }
@@ -137,7 +137,7 @@ public:
                 player->PrepareQuestMenu(me->GetGUID());
             }
 
-            if (sConfigMgr->GetBoolDefault("Skip.dracthyr.Optional.Enable", true))
+            if (sConfigMgr->GetBoolDefault("Skip.Dracthyr.Optional.Enable", true))
             {
                 char const* localizedEntry;
                 switch (player->GetSession()->GetSessionDbcLocale())
@@ -183,7 +183,7 @@ public:
     }
 };
 
-void AddSC_skip_StarterArea()
+void AddSC_skip_DracThyr()
 {
     new Trinitycore_skip_dracthyr_announce;
     new Trinitycore_skip_dracthyr;

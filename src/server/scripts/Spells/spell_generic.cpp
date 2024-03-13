@@ -26,6 +26,7 @@
 #include "Battleground.h"
 #include "BattlePetMgr.h"
 #include "CellImpl.h"
+#include "CommonPredicates.h"
 #include "Containers.h"
 #include "CreatureAI.h"
 #include "DB2Stores.h"
@@ -205,7 +206,7 @@ class spell_spawn_blood_pool : public SpellScript
         Unit* caster = GetCaster();
         Position summonPos = caster->GetPosition();
         LiquidData liquidStatus;
-        if (caster->GetMap()->GetLiquidStatus(caster->GetPhaseShift(), caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ(), map_liquidHeaderTypeFlags::AllLiquids, &liquidStatus, caster->GetCollisionHeight()))
+        if (caster->GetMap()->GetLiquidStatus(caster->GetPhaseShift(), caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ(), {}, &liquidStatus, caster->GetCollisionHeight()))
             summonPos.m_positionZ = liquidStatus.level;
         dest.Relocate(summonPos);
     }
@@ -2991,7 +2992,7 @@ class spell_gen_replenishment : public SpellScript
 
         if (targets.size() > maxTargets)
         {
-            targets.sort(Trinity::PowerPctOrderPred(POWER_MANA));
+            targets.sort(Trinity::Predicates::PowerPctOrderPred(POWER_MANA));
             targets.resize(maxTargets);
         }
     }

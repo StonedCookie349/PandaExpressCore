@@ -223,6 +223,14 @@ namespace WorldPackets
             int32 EmoteID = 0;
         };
 
+        class ClearBossEmotes final : public ServerPacket
+        {
+        public:
+            ClearBossEmotes() : ServerPacket(SMSG_CLEAR_BOSS_EMOTES, 0) { }
+
+            WorldPacket const* Write() override { return &_worldPacket; }
+        };
+
         class TC_GAME_API PrintNotification final : public ServerPacket
         {
         public:
@@ -320,11 +328,11 @@ namespace WorldPackets
         class ChatRestricted final : public ServerPacket
         {
         public:
-            ChatRestricted() : ServerPacket(SMSG_CHAT_RESTRICTED, 1) { }
+            ChatRestricted() : ServerPacket(SMSG_CHAT_RESTRICTED, 4) { }
 
             WorldPacket const* Write() override;
 
-            uint8 Reason = 0;
+            int32 Reason = 0;
         };
 
         class CanLocalWhisperTargetRequest final : public ClientPacket

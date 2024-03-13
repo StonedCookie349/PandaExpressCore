@@ -22,6 +22,7 @@
 #include "Duration.h"
 #include "Errors.h"
 #include "EventProcessor.h"
+#include "MapDefines.h"
 #include "ModelIgnoreFlags.h"
 #include "MovementInfo.h"
 #include "ObjectDefines.h"
@@ -62,10 +63,8 @@ class WorldPacket;
 class ZoneScript;
 struct FactionTemplateEntry;
 struct Loot;
-struct PositionFullTerrainStatus;
 struct QuaternionData;
 struct SpellPowerCost;
-enum ZLiquidStatus : uint32;
 
 namespace WorldPackets
 {
@@ -530,6 +529,7 @@ class TC_GAME_API WorldObject : public Object, public WorldLocation
         bool IsInWorldPvpZone() const;
         bool IsOutdoors() const { return m_outdoors; }
         ZLiquidStatus GetLiquidStatus() const { return m_liquidStatus; }
+        WmoLocation const* GetCurrentWmo() const { return m_currentWmo ? &*m_currentWmo : nullptr; }
 
         InstanceScript* GetInstanceScript() const;
 
@@ -578,10 +578,11 @@ class TC_GAME_API WorldObject : public Object, public WorldLocation
 
         virtual uint8 GetLevelForTarget(WorldObject const* /*target*/) const { return 1; }
 
-        void PlayDistanceSound(uint32 soundId, Player* target = nullptr);
-        void PlayDirectSound(uint32 soundId, Player* target = nullptr, uint32 broadcastTextId = 0);
-        void PlayDirectMusic(uint32 musicId, Player* target = nullptr);
-        void PlayObjectSound(int32 soundKitId, ObjectGuid targetObject, Player* target = nullptr, int32 broadcastTextId = 0);
+        void PlayDistanceSound(uint32 soundId, Player const* target = nullptr) const;
+        void StopDistanceSound(Player const* target = nullptr) const;
+        void PlayDirectSound(uint32 soundId, Player const* target = nullptr, uint32 broadcastTextId = 0) const;
+        void PlayDirectMusic(uint32 musicId, Player const* target = nullptr) const;
+        void PlayObjectSound(int32 soundKitId, ObjectGuid targetObject, Player const* target = nullptr, int32 broadcastTextId = 0) const;
 
         void AddObjectToRemoveList();
 
@@ -788,6 +789,7 @@ class TC_GAME_API WorldObject : public Object, public WorldLocation
         float m_staticFloorZ;
         bool m_outdoors;
         ZLiquidStatus m_liquidStatus;
+        Optional<WmoLocation> m_currentWmo;
 
         //these functions are used mostly for Relocate() and Corpse/Player specific stuff...
         //use them ONLY in LoadFromDB()/Create() funcs and nowhere else!

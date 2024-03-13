@@ -292,7 +292,7 @@ public:
             zoneX, zoneY, groundZ, floorZ, map->GetMinHeight(object->GetPhaseShift(), object->GetPositionX(), object->GetPositionY()), haveMap, haveVMap, haveMMap);
 
         LiquidData liquidStatus;
-        ZLiquidStatus status = map->GetLiquidStatus(object->GetPhaseShift(), object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), map_liquidHeaderTypeFlags::AllLiquids, &liquidStatus);
+        ZLiquidStatus status = map->GetLiquidStatus(object->GetPhaseShift(), object->GetPositionX(), object->GetPositionY(), object->GetPositionZ(), {}, &liquidStatus);
         if (status)
             handler->PSendSysMessage(LANG_LIQUID_STATUS, liquidStatus.level, liquidStatus.depth_level, liquidStatus.entry, uint32(liquidStatus.type_flags.AsUnderlyingType()), status);
 
@@ -1113,13 +1113,6 @@ public:
         }
 
         uint32 offset = area->AreaBit / PLAYER_EXPLORED_ZONES_BITS;
-        if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
-        {
-            handler->SendSysMessage(LANG_BAD_VALUE);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
-
         uint64 val = UI64LIT(1) << (area->AreaBit % PLAYER_EXPLORED_ZONES_BITS);
         playerTarget->AddExploredZones(offset, val);
 
@@ -1153,13 +1146,6 @@ public:
         }
 
         uint32 offset = area->AreaBit / PLAYER_EXPLORED_ZONES_BITS;
-        if (offset >= PLAYER_EXPLORED_ZONES_SIZE)
-        {
-            handler->SendSysMessage(LANG_BAD_VALUE);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
-
         uint64 val = UI64LIT(1) << (area->AreaBit % PLAYER_EXPLORED_ZONES_BITS);
         playerTarget->RemoveExploredZones(offset, val);
 

@@ -63,7 +63,7 @@ public:
 
     constexpr bool operator[](uint32 index) const
     {
-        return (_blocks[index / 32] & (1 << (index % 32))) != 0;
+        return (_blocks[UpdateMaskHelpers::GetBlockIndex(index)] & UpdateMaskHelpers::GetBlockFlag(index)) != 0;
     }
 
     constexpr bool IsAnySet() const
@@ -139,7 +139,7 @@ private:
 };
 
 template<uint32 Bits>
-UpdateMask<Bits> operator&(UpdateMask<Bits> const& left, UpdateMask<Bits> const& right)
+constexpr UpdateMask<Bits> operator&(UpdateMask<Bits> const& left, UpdateMask<Bits> const& right)
 {
     UpdateMask<Bits> result = left;
     result &= right;
@@ -147,7 +147,7 @@ UpdateMask<Bits> operator&(UpdateMask<Bits> const& left, UpdateMask<Bits> const&
 }
 
 template<uint32 Bits>
-UpdateMask<Bits> operator|(UpdateMask<Bits> const& left, UpdateMask<Bits> const& right)
+constexpr UpdateMask<Bits> operator|(UpdateMask<Bits> const& left, UpdateMask<Bits> const& right)
 {
     UpdateMask<Bits> result = left;
     result |= right;

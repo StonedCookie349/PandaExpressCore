@@ -102,8 +102,6 @@ enum DeathKnightSpells
     SPELL_DK_SUBDUING_GRASP_DEBUFF              = 454824,
     SPELL_DK_SUBDUING_GRASP_TALENT              = 454822,
     SPELL_DK_UNHOLY                             = 137007,
-    SPELL_DK_UNHOLY_GROUND_HASTE                = 374271,
-    SPELL_DK_UNHOLY_GROUND_TALENT               = 374265,
     SPELL_DK_UNHOLY_VIGOR                       = 196263,
     SPELL_DH_VORACIOUS_LEECH                    = 274009,
     SPELL_DH_VORACIOUS_TALENT                   = 273953
@@ -519,25 +517,6 @@ class spell_dk_death_and_decay : public AuraScript
     void Register() override
     {
         OnEffectPeriodic += AuraEffectPeriodicFn(spell_dk_death_and_decay::HandleDummyTick, EFFECT_2, SPELL_AURA_PERIODIC_DUMMY);
-    }
-};
-
-// 188290 - Death and Decay (triggered by 316916 - Cleaving Strikes)
-class spell_dk_death_and_decay_increase_targets : public AuraScript
-{
-    bool Validate(SpellInfo const* /*spell*/) override
-    {
-        return ValidateSpellInfo({ SPELL_DK_UNHOLY_GROUND_HASTE });
-    }
-
-    void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/) const
-    {
-        GetTarget()->RemoveAurasDueToSpell(SPELL_DK_UNHOLY_GROUND_HASTE);
-    }
-
-    void Register() override
-    {
-        AfterEffectRemove += AuraEffectRemoveFn(spell_dk_death_and_decay_increase_targets::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
     }
 };
 
@@ -1314,6 +1293,24 @@ class spell_dk_subduing_grasp : public SpellScript
     }
 };
 
+// 374049 - Suppression
+class spell_dk_suppression : public AuraScript
+{
+    bool CheckProc(ProcEventInfo& eventInfo)
+    {
+        SpellInfo const* spellInfo = eventInfo.GetSpellInfo();
+        if (!spellInfo)
+            return false;
+
+        return (spellInfo->GetAllEffectsMechanicMask() & MECHANIC_LOSS_CONTROL_MASK) != 0;
+    }
+
+    void Register() override
+    {
+        DoCheckProc += AuraCheckProcFn(spell_dk_suppression::CheckProc);
+    }
+};
+
 // 242057 - Rune Empowered
 class spell_dk_t20_2p_rune_empowered : public AuraScript
 {
@@ -1413,20 +1410,14 @@ struct at_dk_death_and_decay : AreaTriggerAI
         if (unit->HasAura(SPELL_DK_CLEAVING_STRIKES))
             unit->CastSpell(unit, SPELL_DK_DEATH_AND_DECAY_INCREASE_TARGETS, TRIGGERED_DONT_REPORT_CAST_ERROR);
 
-        if (unit->HasAura(SPELL_DK_UNHOLY_GROUND_TALENT))
-            unit->CastSpell(unit, SPELL_DK_UNHOLY_GROUND_HASTE);
-
         if (unit->HasAura(SPELL_DK_SANGUINE_GROUND_TALENT))
             unit->CastSpell(unit, SPELL_DK_SANGUINE_GROUND);
     }
 
-    void OnUnitExit(Unit* unit) override
+    void OnUnitExit(Unit* unit, AreaTriggerExitReason /*reason*/) override
     {
         if (unit->GetGUID() != at->GetCasterGuid())
             return;
-
-        if (!unit->HasAura(SPELL_DK_CLEAVING_STRIKES))
-            unit->RemoveAurasDueToSpell(SPELL_DK_UNHOLY_GROUND_HASTE);
 
         if (Aura* deathAndDecay = unit->GetAura(SPELL_DK_DEATH_AND_DECAY_INCREASE_TARGETS))
         {
@@ -1454,7 +1445,6 @@ void AddSC_deathknight_spell_scripts()
     RegisterSpellScript(spell_dk_dark_simulacrum);
     RegisterSpellScript(spell_dk_dark_simulacrum_buff);
     RegisterSpellScript(spell_dk_death_and_decay);
-    RegisterSpellScript(spell_dk_death_and_decay_increase_targets);
     RegisterSpellScript(spell_dk_death_coil);
     RegisterSpellScript(spell_dk_death_gate);
     RegisterSpellScript(spell_dk_death_grip_initial);
@@ -1484,6 +1474,7 @@ void AddSC_deathknight_spell_scripts()
     RegisterSpellScriptWithArgs(spell_dk_soul_reaper, "spell_dk_soul_reaper", EFFECT_1, EFFECT_2);
     RegisterSpellScriptWithArgs(spell_dk_soul_reaper, "spell_dk_soul_reaper_reaper_of_souls", EFFECT_0, Optional<SpellEffIndex>());
     RegisterSpellScript(spell_dk_subduing_grasp);
+    RegisterSpellScript(spell_dk_suppression);
     RegisterSpellScript(spell_dk_t20_2p_rune_empowered);
     RegisterSpellScript(spell_dk_vampiric_blood);
     RegisterSpellScript(spell_dk_voracious);

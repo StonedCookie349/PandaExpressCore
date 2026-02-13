@@ -54,7 +54,6 @@ class TC_GAME_API SmartScript
 
         void ProcessEventsFor(SMART_EVENT e, Unit* unit = nullptr, uint32 var0 = 0, uint32 var1 = 0, bool bvar = false, SpellInfo const* spell = nullptr, GameObject* gob = nullptr, std::string_view varString = { });
         void ProcessEvent(SmartScriptHolder& e, Unit* unit = nullptr, uint32 var0 = 0, uint32 var1 = 0, bool bvar = false, SpellInfo const* spell = nullptr, GameObject* gob = nullptr, std::string_view varString = { });
-        bool CheckTimer(SmartScriptHolder const& e) const;
         static void RecalcTimer(SmartScriptHolder& e, uint32 min, uint32 max);
         void UpdateTimer(SmartScriptHolder& e, uint32 const diff);
         static void InitTimer(SmartScriptHolder& e);
@@ -81,6 +80,7 @@ class TC_GAME_API SmartScript
         bool IsSmart(GameObject* g, bool silent = false) const;
         bool IsSmart(bool silent = false) const;
 
+        void ClearTargetList(uint32 id);
         void StoreTargetList(ObjectVector const& targets, uint32 id);
         void AddToStoredTargetList(ObjectVector const& targets, uint32 id);
         ObjectVector const* GetStoredTargetVector(uint32 id, WorldObject const& ref) const;
@@ -113,7 +113,6 @@ class TC_GAME_API SmartScript
         void RetryLater(SmartScriptHolder& e, bool ignoreChanceRoll = false);
 
         SmartAIEventList mEvents;
-        SmartAIEventList mInstallEvents;
         SmartAIEventList mTimedActionList;
         ObjectGuid mTimedActionListInvoker;
         std::shared_ptr<Scripting::v2::ActionBase> mTimedActionWaitEvent;
@@ -148,8 +147,6 @@ class TC_GAME_API SmartScript
         static constexpr uint32 MAX_NESTED_EVENTS = 10;
 
         ObjectVectorMap _storedTargets;
-
-        void InstallEvents();
 
         void RemoveStoredEvent(uint32 id);
 };

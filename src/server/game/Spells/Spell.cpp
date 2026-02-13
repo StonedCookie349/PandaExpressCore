@@ -65,7 +65,7 @@
 #include "Util.h"
 #include "VMapFactory.h"
 #include "Vehicle.h"
-#include "VMapManager2.h"
+#include "VMapManager.h"
 #include "World.h"
 #include "WorldSession.h"
 #include <numeric>
@@ -81,11 +81,8 @@ SpellDestination::SpellDestination(WorldObject const& wObj) : _position(wObj.Get
 void SpellDestination::Relocate(Position const& pos)
 {
     if (!_transportGUID.IsEmpty())
-    {
-        Position offset;
-        _position.GetPositionOffsetTo(pos, offset);
-        _transportOffset.RelocateOffset(offset);
-    }
+        _transportOffset.RelocateOffset(_position.GetPositionOffsetTo(pos));
+
     _position.Relocate(pos);
 }
 
@@ -502,7 +499,10 @@ m_spellValue(new SpellValue(m_spellInfo, caster)), _spellEvent(nullptr)
     }
 
     if (Player const* modOwner = caster->GetSpellModOwner())
+    {
         modOwner->ApplySpellMod(info, SpellModOp::Doses, m_spellValue->AuraStackAmount, this);
+        modOwner->ApplySpellMod(info, SpellModOp::MaxTargets, m_spellValue->MaxAffectedTargets, this);
+    }
 
     if (!originalCasterGUID.IsEmpty())
         m_originalCasterGUID = originalCasterGUID;
@@ -535,6 +535,9 @@ m_spellValue(new SpellValue(m_spellInfo, caster)), _spellEvent(nullptr)
 
     if (IsIgnoringCooldowns())
         m_castFlagsEx |= CAST_FLAG_EX_IGNORE_COOLDOWN;
+
+    if (_triggeredCastFlags & TRIGGERED_SUPPRESS_CASTER_ANIM)
+        m_castFlagsEx |= CAST_FLAG_EX_SUPPRESS_CASTER_ANIM;
 
     unitTarget = nullptr;
     itemTarget = nullptr;
@@ -2437,7 +2440,9 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
 
     // Calculate hit result
     WorldObject* caster = m_originalCaster ? m_originalCaster : m_caster;
-    targetInfo.MissCondition = caster->SpellHitResult(target, m_spellInfo, m_canReflect && !(IsPositive() && m_caster->IsFriendlyTo(target)));
+    targetInfo.MissCondition = caster->SpellHitResult(target, m_spellInfo,
+        m_canReflect && !(IsPositive() && m_caster->IsFriendlyTo(target)),
+        false /*immunity will be checked after complete EffectMask is known*/);
 
     // Spell have speed - need calculate incoming time
     // Incoming time is zero for self casts. At least I think so.
@@ -2482,7 +2487,12 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
     {
         // Calculate reflected spell result on caster (shouldn't be able to reflect gameobject spells)
         Unit* unitCaster = ASSERT_NOTNULL(m_caster->ToUnit());
-        targetInfo.ReflectResult = unitCaster->SpellHitResult(unitCaster, m_spellInfo, false); // can't reflect twice
+        targetInfo.ReflectResult = unitCaster->SpellHitResult(unitCaster, m_spellInfo,
+            false /*can't reflect twice*/,
+            false /*immunity will be checked after complete EffectMask is known*/);
+
+        if (targetInfo.ReflectResult == SPELL_MISS_MISS && target->HasAuraType(SPELL_AURA_REFLECT_SPELLS))
+            targetInfo.ReflectingSpellId = target->GetAuraEffectsByType(SPELL_AURA_REFLECT_SPELLS).front()->GetId();
 
         // Proc spell reflect aura when missile hits the original target
         target->m_Events.AddEvent(new ProcReflectDelayed(target, m_originalCasterGUID), target->m_Events.CalculateTime(Milliseconds(targetInfo.TimeDelay)));
@@ -2893,6 +2903,7 @@ void Spell::TargetInfo::DoDamageAndTriggers(Spell* spell)
             hasDamage = true;
             // Fill base damage struct (unitTarget - is real spell target)
             SpellNonMeleeDamage damageInfo(caster, spell->unitTarget, spell->m_spellInfo, spell->m_SpellVisual, spell->m_spellSchoolMask, spell->m_castId);
+            damageInfo.reflectingSpellId = ReflectingSpellId;
             // Check damage immunity
             if (spell->unitTarget->IsImmunedToDamage(caster, spell->m_spellInfo))
             {
@@ -2951,7 +2962,10 @@ void Spell::TargetInfo::DoDamageAndTriggers(Spell* spell)
             if (MissCondition == SPELL_MISS_RESIST && spell->m_spellInfo->HasAttribute(SPELL_ATTR1_FAILURE_BREAKS_STEALTH) && spell->unitTarget->GetTypeId() == TYPEID_UNIT)
             {
                 Unit* unitCaster = ASSERT_NOTNULL(spell->m_caster->ToUnit());
-                unitCaster->RemoveAurasWithInterruptFlags(SpellAuraInterruptFlags::Interacting);
+                unitCaster->RemoveAppliedAuras([](AuraApplication const* aurApp)
+                {
+                    return aurApp->GetBase()->GetSpellInfo()->Dispel == DISPEL_STEALTH;
+                });
                 spell->unitTarget->ToCreature()->EngageWithTarget(unitCaster);
             }
         }
@@ -3099,7 +3113,7 @@ SpellMissInfo Spell::PreprocessSpellHit(Unit* unit, TargetInfo& hitInfo)
             return SPELL_MISS_EVADE;
 
     // For delayed spells immunity may be applied between missile launch and hit - check immunity for that case
-    if (hitInfo.TimeDelay && unit->IsImmunedToSpell(m_spellInfo, m_caster))
+    if (hitInfo.TimeDelay && unit->IsImmunedToSpell(m_spellInfo, hitInfo.EffectMask, m_caster))
         return SPELL_MISS_IMMUNE;
 
     CallScriptBeforeHitHandlers(hitInfo.MissCondition);
@@ -3191,7 +3205,10 @@ SpellMissInfo Spell::PreprocessSpellHit(Unit* unit, TargetInfo& hitInfo)
             }
         }
 
-        hitInfo.AuraDuration = Aura::CalcMaxDuration(m_spellInfo, origCaster, &m_powerCost);
+        if (m_spellValue->Duration)
+            hitInfo.AuraDuration = *m_spellValue->Duration;
+        else
+            hitInfo.AuraDuration = Aura::CalcMaxDuration(m_spellInfo, origCaster, &m_powerCost);
 
         // unit is immune to aura if it was diminished to 0 duration
         if (!hitInfo.Positive && !unit->ApplyDiminishingToDuration(m_spellInfo, hitInfo.AuraDuration, origCaster, diminishLevel))
@@ -3620,8 +3637,6 @@ void Spell::cancel()
             SendChannelUpdate(0, SPELL_FAILED_INTERRUPTED);
             SendInterrupted(0);
             SendCastResult(SPELL_FAILED_INTERRUPTED);
-
-            m_appliedMods.clear();
             break;
         default:
             break;
@@ -3890,7 +3905,7 @@ void Spell::_cast(bool skipCheck)
     }
 
     if (m_scriptResult && !m_scriptWaitsForSpellHit)
-        m_scriptResult->SetResult(SPELL_CAST_OK);
+        m_scriptResult.SetResult(SPELL_CAST_OK);
 
     CallScriptAfterCastHandlers();
 
@@ -4379,7 +4394,7 @@ void Spell::finish(SpellCastResult result)
     m_spellState = SPELL_STATE_FINISHED;
 
     if (m_scriptResult && (m_scriptWaitsForSpellHit || result != SPELL_CAST_OK))
-        m_scriptResult->SetResult(result);
+        m_scriptResult.SetResult(result);
 
     if (!m_caster)
         return;
@@ -4767,7 +4782,7 @@ void Spell::SendSpellStart()
     if (schoolImmunityMask || mechanicImmunityMask)
         castFlags |= CAST_FLAG_IMMUNITY;
 
-    if ((IsTriggered() && !m_spellInfo->IsAutoRepeatRangedSpell()) || m_triggeredByAuraSpell)
+    if ((!m_fromClient && (_triggeredCastFlags & TRIGGERED_IS_TRIGGERED_MASK) != 0 && !m_spellInfo->IsAutoRepeatRangedSpell()) || m_triggeredByAuraSpell)
         castFlags |= CAST_FLAG_PENDING;
 
     if (m_spellInfo->HasAttribute(SPELL_ATTR0_USES_RANGED_SLOT) || m_spellInfo->HasAttribute(SPELL_ATTR10_USES_RANGED_SLOT_COSMETIC_ONLY) || m_spellInfo->HasAttribute(SPELL_ATTR0_CU_NEEDS_AMMO_DATA))
@@ -4866,7 +4881,7 @@ void Spell::SendSpellGo()
     uint32 castFlags = CAST_FLAG_UNKNOWN_9;
 
     // triggered spells with spell visual != 0
-    if ((IsTriggered() && !m_spellInfo->IsAutoRepeatRangedSpell()) || m_triggeredByAuraSpell)
+    if ((!m_fromClient && (_triggeredCastFlags & TRIGGERED_IS_TRIGGERED_MASK) != 0 && !m_spellInfo->IsAutoRepeatRangedSpell()) || m_triggeredByAuraSpell)
         castFlags |= CAST_FLAG_PENDING;
 
     if (m_spellInfo->HasAttribute(SPELL_ATTR0_USES_RANGED_SLOT) || m_spellInfo->HasAttribute(SPELL_ATTR10_USES_RANGED_SLOT_COSMETIC_ONLY) || m_spellInfo->HasAttribute(SPELL_ATTR0_CU_NEEDS_AMMO_DATA))
@@ -5086,7 +5101,7 @@ static std::pair<int32, SpellHealPredictionType> CalcPredictedHealing(SpellInfo 
                 case SPELL_AURA_OBS_MOD_HEALTH:
                     points += unitCaster->SpellHealingBonusDone(target,
                         spellInfo, spellEffectInfo.CalcValue(unitCaster, nullptr, target, nullptr, castItemEntry, castItemLevel),
-                        DIRECT_DAMAGE, spellEffectInfo, 1, spell) * spellInfo->GetMaxTicks();
+                        DIRECT_DAMAGE, spellEffectInfo, 1, spell) * spellEffectInfo.GetPeriodicTickCount();
                     break;
                 case SPELL_AURA_PERIODIC_TRIGGER_SPELL:
                     if (SpellInfo const* triggered = sSpellMgr->GetSpellInfo(spellEffectInfo.TriggerSpell, spellInfo->Difficulty))
@@ -6039,17 +6054,25 @@ SpellCastResult Spell::CheckCast(bool strict, int32* param1 /*= nullptr*/, int32
         if (castResult != SPELL_CAST_OK)
             return castResult;
 
-        // If it's not a melee spell, check if vision is obscured by SPELL_AURA_INTERFERE_TARGETTING
-        if (m_spellInfo->DmgClass != SPELL_DAMAGE_CLASS_MELEE)
+        // If it's not a melee spell, check if vision is obscured by SPELL_AURA_INTERFERE_ENEMY_TARGETING
+        if (m_spellInfo->DmgClass != SPELL_DAMAGE_CLASS_MELEE && !m_spellInfo->HasAttribute(SPELL_ATTR2_IGNORE_LINE_OF_SIGHT)) // targets can be hit with spells that ignore LoS
         {
             if (Unit const* unitCaster = m_caster->ToUnit())
             {
-                for (AuraEffect const* auraEff : unitCaster->GetAuraEffectsByType(SPELL_AURA_INTERFERE_TARGETTING))
+                for (AuraEffect const* auraEff : unitCaster->GetAuraEffectsByType(SPELL_AURA_INTERFERE_ENEMY_TARGETING))
                     if (!unitCaster->IsFriendlyTo(auraEff->GetCaster()) && !target->HasAura(auraEff->GetId(), auraEff->GetCasterGUID()))
                         return SPELL_FAILED_VISION_OBSCURED;
 
-                for (AuraEffect const* auraEff : target->GetAuraEffectsByType(SPELL_AURA_INTERFERE_TARGETTING))
-                    if (!unitCaster->IsFriendlyTo(auraEff->GetCaster()) && (!target->HasAura(auraEff->GetId(), auraEff->GetCasterGUID()) || !unitCaster->HasAura(auraEff->GetId(), auraEff->GetCasterGUID())))
+                for (AuraEffect const* auraEff : target->GetAuraEffectsByType(SPELL_AURA_INTERFERE_ENEMY_TARGETING))
+                    if (!unitCaster->IsFriendlyTo(auraEff->GetCaster()) && !unitCaster->HasAura(auraEff->GetId(), auraEff->GetCasterGUID()))
+                        return SPELL_FAILED_VISION_OBSCURED;
+
+                for (AuraEffect const* auraEff : unitCaster->GetAuraEffectsByType(SPELL_AURA_INTERFERE_ALL_TARGETING))
+                    if (!target->HasAura(auraEff->GetId(), auraEff->GetCasterGUID()))
+                        return SPELL_FAILED_VISION_OBSCURED;
+
+                for (AuraEffect const* auraEff : target->GetAuraEffectsByType(SPELL_AURA_INTERFERE_ALL_TARGETING))
+                    if (!unitCaster->HasAura(auraEff->GetId(), auraEff->GetCasterGUID()))
                         return SPELL_FAILED_VISION_OBSCURED;
             }
         }
@@ -6385,7 +6408,7 @@ SpellCastResult Spell::CheckCast(bool strict, int32* param1 /*= nullptr*/, int32
                     else if (m_preGeneratedPath->IsInvalidDestinationZ(target)) // Check position z, if not in a straight line
                         return SPELL_FAILED_NOPATH;
 
-                    m_preGeneratedPath->ShortenPathUntilDist(PositionToVector3(target), objSize); // move back
+                    m_preGeneratedPath->ShortenPathUntilDist(PositionToVector3(target->GetPosition()), objSize); // move back
                 }
                 break;
             }
@@ -8604,6 +8627,10 @@ void Spell::PreprocessSpellLaunch(TargetInfo& targetInfo)
     if (!targetUnit)
         return;
 
+    // Check immunity now that EffectMask is known
+    if (targetUnit->IsImmunedToSpell(GetSpellInfo(), targetInfo.EffectMask, m_caster))
+        targetInfo.MissCondition = SPELL_MISS_IMMUNE;
+
     // This will only cause combat - the target will engage once the projectile hits (in Spell::TargetInfo::PreprocessTarget)
     if (m_originalCaster && targetInfo.MissCondition != SPELL_MISS_EVADE && !m_originalCaster->IsFriendlyTo(targetUnit) && (!m_spellInfo->IsPositive() || m_spellInfo->HasEffect(SPELL_EFFECT_DISPEL)) && (m_spellInfo->HasInitialAggro() || targetUnit->IsEngaged()))
         m_originalCaster->SetInCombatWith(targetUnit, true);
@@ -8614,7 +8641,11 @@ void Spell::PreprocessSpellLaunch(TargetInfo& targetInfo)
         unit = targetUnit;
     // In case spell reflect from target, do all effect on caster (if hit)
     else if (targetInfo.MissCondition == SPELL_MISS_REFLECT && targetInfo.ReflectResult == SPELL_MISS_NONE)
+    {
         unit = m_caster->ToUnit();
+        if (unit && unit->IsImmunedToSpell(GetSpellInfo(), targetInfo.EffectMask, unit))
+            targetInfo.ReflectResult = SPELL_MISS_IMMUNE;
+    }
 
     if (!unit)
         return;
@@ -9167,6 +9198,14 @@ bool Spell::CheckScriptEffectImplicitTargets(uint32 effIndex, uint32 effIndexToC
     return true;
 }
 
+SpellScript* Spell::GetScriptByType(std::type_info const& type) const
+{
+    auto itr = std::ranges::find(m_loadedScripts, type, [](SpellScript* script) -> std::type_info const& { return typeid(*script); });
+    if (itr != m_loadedScripts.end())
+        return *itr;
+    return nullptr;
+}
+
 bool Spell::CanExecuteTriggersOnHit(Unit* unit, SpellInfo const* triggeredByAura /*= nullptr*/) const
 {
     bool onlyOnTarget = (triggeredByAura && (triggeredByAura->HasAttribute(SPELL_ATTR4_CLASS_TRIGGER_ONLY_ON_TARGET)));
@@ -9631,6 +9670,43 @@ void SelectRandomInjuredTargets(std::list<WorldObject*>& targets, size_t maxTarg
 
     targets.resize(maxTargets);
     std::ranges::transform(tempTargets.begin(), tempTargets.begin() + maxTargets, targets.begin(), Trinity::TupleElement<0>);
+}
+
+void SortTargetsWithPriorityRules(std::list<WorldObject*>& targets, size_t maxTargets, std::span<TargetPriorityRule const> rules)
+{
+    if (targets.size() <= maxTargets)
+        return;
+
+    std::vector<std::pair<WorldObject*, int32>> prioritizedTargets(targets.size());
+
+    // score each target based on how many rules they satisfy.
+    std::ranges::transform(targets, prioritizedTargets.begin(), [&](WorldObject* target)
+    {
+        int32 score = 0;
+        for (std::size_t i = 0; i < rules.size(); ++i)
+            if (rules[i].Rule(target))
+                score |= 1 << (rules.size() - 1 - i);
+
+        return std::make_pair(target, score);
+    });
+
+    // the higher the value, the higher the priority is.
+    std::ranges::sort(prioritizedTargets, std::ranges::greater(), Trinity::TupleElement<1>);
+
+    int32 tieScore = prioritizedTargets[maxTargets - 1].second;
+
+    // if there are ties at the cutoff, shuffle them to avoid selection bias.
+    if (prioritizedTargets[maxTargets].second == tieScore)
+    {
+        auto toShuffle = std::equal_range(prioritizedTargets.begin(), prioritizedTargets.end(), std::pair<WorldObject*, int32>(nullptr, tieScore),
+            [](std::pair<WorldObject*, int32> const& target1, std::pair<WorldObject*, int32> const& target2) { return target1.second > target2.second; });
+
+        // shuffle only the tied range to randomize final selection.
+        Containers::RandomShuffle(toShuffle.first, toShuffle.second);
+    }
+
+    targets.resize(maxTargets);
+    std::ranges::transform(prioritizedTargets.begin(), prioritizedTargets.begin() + maxTargets, targets.begin(), Trinity::TupleElement<0>);
 }
 } //namespace Trinity
 

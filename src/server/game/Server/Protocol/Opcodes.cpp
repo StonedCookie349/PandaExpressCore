@@ -1011,7 +1011,7 @@ void OpcodeTable::InitializeClientOpcodes()
     DEFINE_HANDLER(CMSG_SET_BACKPACK_SELL_JUNK_DISABLED,                    STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSetBackpackSellJunkDisabled);
     DEFINE_HANDLER(CMSG_SET_BANK_AUTOSORT_DISABLED,                         STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSetBankAutosortDisabled);
     DEFINE_HANDLER(CMSG_SET_CONTACT_NOTES,                                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleSetContactNotesOpcode);
-    DEFINE_HANDLER(CMSG_SET_CURRENCY_FLAGS,                                 STATUS_UNHANDLED, PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_SET_CURRENCY_FLAGS,                                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSetCurrencyFlags);
     DEFINE_HANDLER(CMSG_SET_DIFFICULTY_ID,                                  STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SET_DUNGEON_DIFFICULTY,                             STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleSetDungeonDifficultyOpcode);
     DEFINE_HANDLER(CMSG_SET_EMPOWER_MIN_HOLD_STAGE_PERCENT,                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSetEmpowerMinHoldStagePercent);
@@ -1056,7 +1056,7 @@ void OpcodeTable::InitializeClientOpcodes()
     DEFINE_HANDLER(CMSG_SORT_ACCOUNT_BANK_BAGS,                             STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSortAccountBankBags);
     DEFINE_HANDLER(CMSG_SORT_BAGS,                                          STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSortBags);
     DEFINE_HANDLER(CMSG_SORT_BANK_BAGS,                                     STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSortBankBags);
-    DEFINE_HANDLER(CMSG_SPAWN_TRACKING_UPDATE,                              STATUS_UNHANDLED, PROCESS_THREADUNSAFE, &WorldSession::Handle_NULL);
+    DEFINE_HANDLER(CMSG_SPAWN_TRACKING_UPDATE,                              STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSpawnTrackingUpdate);
     DEFINE_HANDLER(CMSG_SPECTATE_CHANGE,                                    STATUS_UNHANDLED, PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     DEFINE_HANDLER(CMSG_SPELL_CLICK,                                        STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSpellClick);
     DEFINE_HANDLER(CMSG_SPELL_EMPOWER_RELEASE,                              STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   &WorldSession::HandleSpellEmpowerRelease);
